@@ -1,0 +1,11 @@
+{
+  "name": "dti-web-demo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "playwright test pruebas --reporter=list"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.65.0"
+  }
+}

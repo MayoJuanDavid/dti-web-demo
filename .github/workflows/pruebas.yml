@@ -1,0 +1,23 @@
+name: Pruebas de dev
+on:
+  push:
+    branches: [dev]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  playwright:
+    name: Playwright en Chromium
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Instalar dependencias verificadas
+        run: npm ci --no-audit --no-fund
+      - name: Preparar Chromium
+        run: npx --no-install playwright install --with-deps chromium
+      - name: Ejecutar los casos de la demo
+        run: npm test

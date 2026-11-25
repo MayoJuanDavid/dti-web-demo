@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calendario ficticio de cursos</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 2rem 1rem;
+      line-height: 1.5;
+      background: #f4f5f7;
+      color: #1b1b1f;
+    }
+
+    main {
+      max-width: 42rem;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .intro {
+      margin-top: 0;
+      color: #4a4a52;
+    }
+
+    .controles {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .controles label {
+      font-weight: 600;
+    }
+
+    #selector-curso {
+      padding: 0.4rem 0.6rem;
+      font-size: 1rem;
+      border: 1px solid #b7b7c0;
+      border-radius: 0.4rem;
+      background: #ffffff;
+      color: inherit;
+    }
+
+    #calendario {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .evento {
+      border: 1px solid #d5d5de;
+      border-left: 4px solid #3a6ea5;
+      border-radius: 0.5rem;
+      padding: 1rem 1.25rem;
+      background: #ffffff;
+    }
+
+    .evento h2 {
+      margin: 0 0 0.5rem;
+      font-size: 1.15rem;
+    }
+
+    .evento dl {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.15rem 0.75rem;
+      margin: 0 0 0.75rem;
+    }
+
+    .evento dt {
+      font-weight: 600;
+      color: #4a4a52;
+    }
+
+    .evento dd {
+      margin: 0;
+    }
+
+    .titulo-evento {
+      margin: 0;
+      font-weight: 600;
+      font-size: 1.05rem;
+    }
+
+    .acciones {
+      margin-top: 0.75rem;
+    }
+
+    button {
+      font: inherit;
+      padding: 0.45rem 0.9rem;
+      border: 1px solid #3a6ea5;
+      border-radius: 0.4rem;
+      background: #3a6ea5;
+      color: #ffffff;
+      cursor: pointer;
+    }
+
+    button.secundario {
+      background: #ffffff;
+      color: #3a6ea5;
+    }
+
+    #detalle {
+      border: 1px solid #d5d5de;
+      border-left: 4px solid #3a6ea5;
+      border-radius: 0.5rem;
+      padding: 1rem 1.25rem;
+      background: #ffffff;
+    }
+
+    #detalle h2 {
+      margin: 0.75rem 0 0.5rem;
+      font-size: 1.15rem;
+    }
+
+    #detalle-descripcion {
+      margin: 0;
+      color: #4a4a52;
+    }
+
+    /* Garantiza que el atributo hidden oculte también a grid/flex. */
+    [hidden] {
+      display: none !important;
+    }
+
+    .nota {
+      margin-top: 2rem;
+      font-size: 0.85rem;
+      color: #6a6a72;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Calendario ficticio de cursos</h1>
+    <p class="intro">Selecciona un curso para ver su próxima sesión en el calendario.</p>
+
+    <div class="controles">
+      <label for="selector-curso">Curso</label>
+      <select id="selector-curso" aria-label="Seleccionar curso">
+        <option value="alfa">Curso Alfa — Fundamentos</option>
+        <option value="beta">Curso Beta — Práctica</option>
+      </select>
+    </div>
+
+    <section id="calendario" aria-live="polite" aria-label="Eventos del curso seleccionado">
+      <article class="evento" data-curso="alfa">
+        <h2>Curso Alfa — Fundamentos</h2>
+        <dl>
+          <dt>Día</dt>
+          <dd>Lunes</dd>
+          <dt>Horario</dt>
+          <dd>09:00 – 11:00</dd>
+          <dt>Aula</dt>
+          <dd>Aula 1</dd>
+        </dl>
+        <p class="titulo-evento">Sesión de introducción</p>
+        <div class="acciones">
+          <button type="button" class="ver-detalle" data-curso="alfa">Ver detalle</button>
+        </div>
+      </article>
+
+      <article class="evento" data-curso="beta" hidden>
+        <h2>Curso Beta — Práctica</h2>
+        <dl>
+          <dt>Día</dt>
+          <dd>Miércoles</dd>
+          <dt>Horario</dt>
+          <dd>11:00 – 13:00</dd>
+          <dt>Aula</dt>
+          <dd>Aula 2</dd>
+        </dl>
+        <p class="titulo-evento">Taller práctico</p>
+        <div class="acciones">
+          <button type="button" class="ver-detalle" data-curso="beta">Ver detalle</button>
+        </div>
+      </article>
+    </section>
+
+    <section id="detalle" aria-label="Detalle del curso" aria-live="polite" hidden>
+      <button type="button" id="volver-calendario" class="secundario">Volver al calendario</button>
+      <h2 id="detalle-titulo"></h2>
+      <p id="detalle-descripcion"></p>
+    </section>
+
+    <p class="nota">Datos ficticios con fines de demostración.</p>
+  </main>
+
+  <script>
+    (function () {
+      var selector = document.getElementById("selector-curso");
+      var eventos = document.querySelectorAll(".evento");
+      var controles = document.querySelector(".controles");
+      var calendario = document.getElementById("calendario");
+      var detalle = document.getElementById("detalle");
+      var detalleTitulo = document.getElementById("detalle-titulo");
+      var detalleDescripcion = document.getElementById("detalle-descripcion");
+      var botonesDetalle = document.querySelectorAll(".ver-detalle");
+      var botonVolver = document.getElementById("volver-calendario");
+
+      // Datos ficticios para la vista de detalle de cada curso.
+      var detalles = {
+        alfa: {
+          titulo: "Curso Alfa — Fundamentos",
+          descripcion: "Sesión de introducción. Lunes de 09:00 a 11:00 en el Aula 1."
+        },
+        beta: {
+          titulo: "Curso Beta — Práctica",
+          descripcion: "Taller práctico. Miércoles de 11:00 a 13:00 en el Aula 2."
+        }
+      };
+
+      function actualizarCalendario() {
+        var seleccion = selector.value;
+        eventos.forEach(function (evento) {
+          var coincide = evento.getAttribute("data-curso") === seleccion;
+          evento.hidden = !coincide;
+        });
+      }
+
+      function mostrarDetalle(curso) {
+        var datos = detalles[curso];
+        if (!datos) {
+          return;
+        }
+        detalleTitulo.textContent = datos.titulo;
+        detalleDescripcion.textContent = datos.descripcion;
+        controles.hidden = true;
+        calendario.hidden = true;
+        detalle.hidden = false;
+      }
+
+      function volverAlCalendario() {
+        detalle.hidden = true;
+        controles.hidden = false;
+        calendario.hidden = false;
+        // Se conserva el curso elegido: el selector no cambió, solo se repinta.
+        actualizarCalendario();
+      }
+
+      selector.addEventListener("change", actualizarCalendario);
+
+      botonesDetalle.forEach(function (boton) {
+        boton.addEventListener("click", function () {
+          mostrarDetalle(boton.getAttribute("data-curso"));
+        });
+      });
+
+      botonVolver.addEventListener("click", volverAlCalendario);
+
+      actualizarCalendario();
+    })();
+  </script>
+</body>
+</html>
