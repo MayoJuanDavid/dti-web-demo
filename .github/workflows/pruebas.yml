@@ -2,6 +2,9 @@ name: Pruebas de dev
 on:
   push:
     branches: [dev]
+  pull_request:
+    branches: [dev]
+    types: [opened, synchronize, reopened]
   workflow_dispatch:
 permissions:
   contents: read
@@ -20,4 +23,12 @@ jobs:
       - name: Preparar Chromium
         run: npx --no-install playwright install --with-deps chromium
       - name: Ejecutar los casos de la demo
-        run: npm test
+        run: npx --no-install playwright test pruebas --reporter=list,html
+      - name: Adjuntar el informe HTML de Playwright
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: informe-playwright
+          path: playwright-report/
+          retention-days: 3
+          if-no-files-found: error
