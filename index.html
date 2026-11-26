@@ -153,6 +153,7 @@
       <select id="selector-curso" aria-label="Seleccionar curso">
         <option value="alfa">Curso Alfa — Fundamentos</option>
         <option value="beta">Curso Beta — Práctica</option>
+        <option value="cur-01">CUR-01 · Curso DEMO 01 (ficticio)</option>
       </select>
     </div>
 
@@ -188,11 +189,29 @@
           <button type="button" class="ver-detalle" data-curso="beta">Ver detalle</button>
         </div>
       </article>
+
+      <article class="evento" data-curso="cur-01" hidden>
+        <h2>Curso DEMO 01 (ficticio)</h2>
+        <dl data-datos-ficha>
+          <dt>Código</dt>
+          <dd>CUR-01</dd>
+          <dt>Inicio</dt>
+          <dd>07/12/2026</dd>
+          <dt>Fin</dt>
+          <dd>18/12/2026</dd>
+          <dt>Modalidad</dt>
+          <dd>Virtual</dd>
+        </dl>
+        <div class="acciones">
+          <button type="button" class="ver-detalle" data-curso="cur-01">Ver detalle</button>
+        </div>
+      </article>
     </section>
 
     <section id="detalle" aria-label="Detalle del curso" aria-live="polite" hidden>
       <button type="button" id="volver-calendario" class="secundario">Volver al calendario</button>
       <h2 id="detalle-titulo"></h2>
+      <dl id="detalle-datos" hidden></dl>
       <p id="detalle-descripcion"></p>
     </section>
 
@@ -207,6 +226,7 @@
       var calendario = document.getElementById("calendario");
       var detalle = document.getElementById("detalle");
       var detalleTitulo = document.getElementById("detalle-titulo");
+      var detalleDatos = document.getElementById("detalle-datos");
       var detalleDescripcion = document.getElementById("detalle-descripcion");
       var botonesDetalle = document.querySelectorAll(".ver-detalle");
       var botonVolver = document.getElementById("volver-calendario");
@@ -220,6 +240,10 @@
         beta: {
           titulo: "Curso Beta — Práctica",
           descripcion: "Taller práctico. Miércoles de 11:00 a 13:00 en el Aula 2."
+        },
+        "cur-01": {
+          titulo: "Curso DEMO 01 (ficticio)",
+          descripcion: ""
         }
       };
 
@@ -231,13 +255,19 @@
         });
       }
 
-      function mostrarDetalle(curso) {
-        var datos = detalles[curso];
+      function mostrarDetalle(evento) {
+        var datos = detalles[evento.dataset.curso];
         if (!datos) {
           return;
         }
         detalleTitulo.textContent = datos.titulo;
         detalleDescripcion.textContent = datos.descripcion;
+        var campos = evento.querySelector("[data-datos-ficha]");
+        detalleDatos.replaceChildren();
+        if (campos) {
+          detalleDatos.append(...campos.cloneNode(true).children);
+        }
+        detalleDatos.hidden = !campos;
         controles.hidden = true;
         calendario.hidden = true;
         detalle.hidden = false;
@@ -255,7 +285,7 @@
 
       botonesDetalle.forEach(function (boton) {
         boton.addEventListener("click", function () {
-          mostrarDetalle(boton.getAttribute("data-curso"));
+          mostrarDetalle(boton.closest(".evento"));
         });
       });
 
